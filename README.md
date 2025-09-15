@@ -1,0 +1,1 @@
+# pygmalion-diary-api-docs
