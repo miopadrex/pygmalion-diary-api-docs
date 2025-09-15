@@ -4,10 +4,8 @@ info:
   title: 피그말리온 다이어리 API
   description: 회사에서 좋았던 일을 기록하는 다이어리 서비스
   version: 1.0.0
-  contact:
-    name: 개발팀
-    email: dev@company.com
 
+# Base URL: https://umlnlzcebxiumpjdpvsq.supabase.co
 servers:
   - url: https://umlnlzcebxiumpjdpvsq.supabase.co
     description: Supabase 서버
@@ -16,7 +14,7 @@ paths:
   /auth/v1/signup:
     post:
       summary: 회원가입
-      tags: [인증]
+      tags: [User Management]
       requestBody:
         required: true
         content:
@@ -40,26 +38,12 @@ paths:
                       example: "김개발"
       responses:
         '200':
-          description: 회원가입 성공
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  access_token:
-                    type: string
-                  user:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      email:
-                        type: string
+          description: 성공
 
   /auth/v1/token:
     post:
       summary: 로그인
-      tags: [인증]
+      tags: [User Management]
       parameters:
         - name: grant_type
           in: query
@@ -77,37 +61,94 @@ paths:
                 email:
                   type: string
                   format: email
+                  example: "someone@email.com"
                 password:
                   type: string
+                  example: "QRBtlWfSjmGdpSInaqDh"
       responses:
         '200':
           description: 로그인 성공
 
-  /rest/v1/user_profiles:
+  /auth/v1/user:
     get:
-      summary: 사용자 프로필 조회
-      tags: [사용자]
-      security:
-        - bearerAuth: []
+      summary: 사용자 정보 조회
+      tags: [User Management]
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "Bearer USER_TOKEN"
       responses:
         '200':
-          description: 프로필 조회 성공
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
+          description: 사용자 정보 조회 성공
+    put:
+      summary: 사용자 정보 업데이트
+      tags: [User Management]
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "Bearer USER_TOKEN"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "someone@email.com"
+                password:
+                  type: string
+                  example: "new-password"
+                data:
                   type: object
-                  properties:
-                    id:
-                      type: string
-                    nickname:
-                      type: string
-                    push_enabled:
-                      type: boolean
-                    push_time:
-                      type: string
-                      format: time
+                  example:
+                    key: "value"
+      responses:
+        '200':
+          description: 사용자 정보 업데이트 성공
+
+  /auth/v1/recover:
+    post:
+      summary: 비밀번호 재설정
+      tags: [User Management]
+      parameters:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "someone@email.com"
+      responses:
+        '200':
+          description: 재설정 이메일 발송 성공
+
+  /auth/v1/logout:
+    post:
+      summary: 로그아웃
+      tags: [User Management]
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "Bearer USER_TOKEN"
+      responses:
+        '200':
+          description: 로그아웃 성공
 
 components:
   securitySchemes:
