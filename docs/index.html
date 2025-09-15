@@ -14,7 +14,12 @@
         presets: [
             SwaggerUIBundle.presets.apis,
             SwaggerUIBundle.presets.standalone
-        ]
+        ],
+        requestInterceptor: (request) => {
+            // 강제로 apikey 헤더 추가
+            request.headers['apikey'] = 'sb_publishable_MlI53jAljTKEkr9xteLADw_Bam4REnV';
+            return request;
+        }
     });
 </script>
 </body>

@@ -5,27 +5,26 @@ info:
   description: 회사에서 좋았던 일을 기록하는 다이어리 서비스
   version: 1.0.0
 
-# Base URL (복사용): https://umlnlzcebxiumpjdpvsq.supabase.co
 servers:
   - url: https://umlnlzcebxiumpjdpvsq.supabase.co
     description: Supabase 서버
 
-security:
-  - apiKey: []
+# 전역 security 제거 (각 API마다 다르게 설정)
+# security:
+#   - apiKey: []
 
 paths:
   /auth/v1/signup:
     post:
       summary: 회원가입
       tags: [User Management]
-      security:
-        - apiKey: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
+              required: [email, password]
               properties:
                 email:
                   type: string
@@ -49,8 +48,6 @@ paths:
     post:
       summary: 로그인
       tags: [User Management]
-      security:
-        - apiKey: []
       parameters:
         - name: grant_type
           in: query
@@ -64,6 +61,7 @@ paths:
           application/json:
             schema:
               type: object
+              required: [email, password]
               properties:
                 email:
                   type: string
@@ -82,7 +80,6 @@ paths:
       tags: [User Management]
       security:
         - bearerAuth: []
-        - apiKey: []
       responses:
         '200':
           description: 사용자 정보 조회 성공
@@ -91,7 +88,6 @@ paths:
       tags: [User Management]
       security:
         - bearerAuth: []
-        - apiKey: []
       requestBody:
         required: true
         content:
@@ -114,45 +110,9 @@ paths:
         '200':
           description: 사용자 정보 업데이트 성공
 
-  /auth/v1/recover:
-    post:
-      summary: 비밀번호 재설정
-      tags: [User Management]
-      security:
-        - apiKey: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  format: email
-                  example: "someone@email.com"
-      responses:
-        '200':
-          description: 재설정 이메일 발송 성공
-
-  /auth/v1/logout:
-    post:
-      summary: 로그아웃
-      tags: [User Management]
-      security:
-        - bearerAuth: []
-        - apiKey: []
-      responses:
-        '200':
-          description: 로그아웃 성공
-
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-    apiKey:
-      type: apiKey
-      in: header
-      name: apikey
