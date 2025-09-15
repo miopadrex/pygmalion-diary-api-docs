@@ -100,7 +100,7 @@ paths:
           required: false
           schema:
             type: string
-            example: "eq.34f64ffc-d684-4bd8-9687-7aa2ecfbec9"
+            example: "eq.34f64ffc-d684-4bd8-9687-7aa2ecfbec95"
           description: "사용자 ID 필터 (예: eq.user_id)"
         - name: Prefer
           in: header
