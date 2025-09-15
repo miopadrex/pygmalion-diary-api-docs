@@ -29,17 +29,17 @@ paths:
                 email:
                   type: string
                   format: email
-                  example: "user@example.com"
+                  example: "someone@email.com"
                 password:
                   type: string
                   minLength: 6
-                  example: "password123"
+                  example: "QRBtlWfSjmGdpSInaqDh"
                 data:
                   type: object
                   properties:
                     nickname:
                       type: string
-                      example: "김개발"
+                      example: "테스터1234"
       responses:
         '200':
           description: 성공
@@ -74,18 +74,40 @@ paths:
         '200':
           description: 로그인 성공
 
-  /auth/v1/user:
+  /rest/v1/user_profiles:
     get:
-      summary: 사용자 정보 조회
+      summary: 내 정보 조회
       tags: [User Management]
+      parameters:
+        - name: select
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "*"
       security:
         - bearerAuth: []
       responses:
         '200':
-          description: 사용자 정보 조회 성공
-    put:
-      summary: 사용자 정보 업데이트
+          description: 내 정보 조회 성공
+    patch:
+      summary: 내 정보 업데이트
       tags: [User Management]
+      parameters:
+        - name: some_column
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "eq.someValue"
+          description: "필터 조건 (예: eq.someValue)"
+        - name: Prefer
+          in: header
+          required: false
+          schema:
+            type: string
+            example: "return=minimal"
+          description: "응답 형식 설정"
       security:
         - bearerAuth: []
       requestBody:
@@ -95,20 +117,18 @@ paths:
             schema:
               type: object
               properties:
-                email:
+                other_column:
                   type: string
-                  format: email
-                  example: "someone@email.com"
-                password:
+                  example: "otherValue"
+                nickname:
                   type: string
-                  example: "new-password"
-                data:
-                  type: object
-                  example:
-                    key: "value"
+                  example: "새로운닉네임"
+                push_enabled:
+                  type: boolean
+                  example: true
       responses:
         '200':
-          description: 사용자 정보 업데이트 성공
+          description: 내 정보 업데이트 성공
 
 components:
   securitySchemes:
