@@ -5,7 +5,7 @@ info:
   description: 회사에서 좋았던 일을 기록하는 다이어리 서비스
   version: 1.0.0
 
-# Base URL: https://umlnlzcebxiumpjdpvsq.supabase.co
+# Base URL (복사용): https://umlnlzcebxiumpjdpvsq.supabase.co
 servers:
   - url: https://umlnlzcebxiumpjdpvsq.supabase.co
     description: Supabase 서버
@@ -73,26 +73,16 @@ paths:
     get:
       summary: 사용자 정보 조회
       tags: [User Management]
-      parameters:
-        - name: Authorization
-          in: header
-          required: true
-          schema:
-            type: string
-            example: "Bearer USER_TOKEN"
+      security:
+        - bearerAuth: []
       responses:
         '200':
           description: 사용자 정보 조회 성공
     put:
       summary: 사용자 정보 업데이트
       tags: [User Management]
-      parameters:
-        - name: Authorization
-          in: header
-          required: true
-          schema:
-            type: string
-            example: "Bearer USER_TOKEN"
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -119,7 +109,6 @@ paths:
     post:
       summary: 비밀번호 재설정
       tags: [User Management]
-      parameters:
       requestBody:
         required: true
         content:
@@ -139,13 +128,8 @@ paths:
     post:
       summary: 로그아웃
       tags: [User Management]
-      parameters:
-        - name: Authorization
-          in: header
-          required: true
-          schema:
-            type: string
-            example: "Bearer USER_TOKEN"
+      security:
+        - bearerAuth: []
       responses:
         '200':
           description: 로그아웃 성공
