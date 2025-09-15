@@ -91,23 +91,25 @@ paths:
         '200':
           description: 내 정보 조회 성공
     patch:
-      summary: 내 정보 업데이트
+      summary: 사용자 프로필 업데이트
       tags: [User Management]
+      description: "특정 행을 업데이트합니다. 기본적으로 모든 행과 매치되므로 horizontal filters(eq, lt, is 등)를 사용하여 특정 행을 지정해야 합니다."
       parameters:
-        - name: some_column
+        - name: id
           in: query
           required: false
           schema:
             type: string
-            example: "eq.someValue"
-          description: "필터 조건 (예: eq.someValue)"
+            example: "eq.34f64ffc-d684-4bd8-9687-7aa2ecfbec9"
+          description: "사용자 ID 필터 (예: eq.user_id)"
         - name: Prefer
           in: header
           required: false
           schema:
             type: string
+            enum: ["return=minimal", "return=representation"]
             example: "return=minimal"
-          description: "응답 형식 설정"
+          description: "응답 형식: minimal(최소), representation(업데이트된 데이터 반환)"
       security:
         - bearerAuth: []
       requestBody:
