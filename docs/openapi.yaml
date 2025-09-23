@@ -877,12 +877,11 @@ paths:
 
         **사용 예시**:
         ```
-        DELETE /rest/v1/diaries?id=eq.123&user_id=eq.user123
+        DELETE /rest/v1/diaries?id=eq.123
         ```
 
         **주의사항**:
         - 필터를 사용해 특정 다이어리를 지정해야 합니다
-        - 권한 확인을 위해 `user_id` 필터 사용을 권장합니다
         - 실제 삭제가 아닌 소프트 삭제(deleted_at 설정) 권장
         - 완전 삭제 시 복구가 불가능합니다
       parameters:
@@ -892,21 +891,6 @@ paths:
           schema:
             type: string
           description: "삭제할 다이어리 ID 필터 (예: eq.0cf52271-bbd5-4e52-8b78-dfb257d30b8f)"
-
-        - name: user_id
-          in: query
-          required: true
-          schema:
-            type: string
-          description: "권한 확인용 사용자 ID 필터 (예:eq.34f64ffc-d684-4bd8-9687-7aa2ecfbec95)"
-
-        - name: deleted_at
-          in: query
-          required: false
-          schema:
-            type: string
-            default: "is.null"
-          description: "삭제되지 않은 다이어리만 삭제 (기본값: is.null)"
 
       security:
         - bearerAuth: []
@@ -1108,18 +1092,6 @@ paths:
             type: string
             example: "eq.0cf52271-bbd5-4e52-8b78-dfb257d30b8f"
           description: "좋아요를 취소할 다이어리 ID 필터 (예: eq.0cf52271-bbd5-4e52-8b78-dfb257d30b8f)"
-        - name: Prefer
-          in: header
-          required: false
-          schema:
-            type: string
-            enum: [ "return=minimal", "return=representation" ]
-            default: "return=representation"
-            example: "return=representation"
-          description: |
-            응답 형식:
-            - `return=minimal`: 최소 응답 (201 상태코드만)
-            - `return=representation`: 생성된 좋아요 데이터 반환
       security:
         - bearerAuth: []
 
