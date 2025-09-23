@@ -877,7 +877,7 @@ paths:
 
         **사용 예시**:
         ```
-        DELETE /rest/v1/diaries?id=eq.123
+        DELETE /rest/v1/diaries?id=eq.0cf52271-bbd5-4e52-8b78-dfb257d30b8f
         ```
 
         **주의사항**:
@@ -987,8 +987,8 @@ paths:
               properties:
                 diary_id:
                   type: string
-                  example: eq.0cf52271-bbd5-4e52-8b78-dfb257d30b8f
-                  description: "좋아요를 추가할 다이어리 ID (예: eq.0cf52271-bbd5-4e52-8b78-dfb257d30b8f)"
+                  example: 0cf52271-bbd5-4e52-8b78-dfb257d30b8f
+                  description: "좋아요를 추가할 다이어리 ID (예: 0cf52271-bbd5-4e52-8b78-dfb257d30b8f)"
 
       responses:
         '201':
