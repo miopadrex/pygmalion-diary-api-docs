@@ -142,6 +142,1086 @@ paths:
         '200':
           description: 로그아웃 성공
 
+  /rest/v1/diaries_with_likes:
+    get:
+      summary: 다이어리 리스트 조회
+      tags: [Diary Management]
+      description: |
+        다이어리 목록을 조회합니다.
+        페이지네이션, 필터링, 정렬 등의 기능을 지원합니다.
+
+        **페이지네이션**: Range 헤더 사용 (예: 0-9는 첫 10개 항목)
+        **필터링**: 쿼리 파라미터로 다양한 조건 설정 가능
+        **정렬**: order 파라미터로 정렬 조건 설정
+      parameters:
+        - name: select
+          in: query
+          required: false
+          schema:
+            type: string
+            default: "*"
+            example: "*"
+          description: "조회할 컬럼 선택 (기본값: 모든 컬럼)"
+
+        # 범위 헤더 (페이지네이션)
+        - name: Range
+          in: header
+          required: false
+          schema:
+            type: string
+            example: "0-9"
+          description: "페이지네이션 범위 (예: 0-9는 첫 10개 항목)"
+
+        # 정렬
+        - name: order
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "created_at.desc"
+          description: "정렬 조건 (컬럼명.asc 또는 컬럼명.desc)"
+
+        # 기본 필터링 - 등호 조건
+        - name: id
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "eq.123"
+          description: "ID 필터 (eq.값)"
+
+        - name: user_id
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "eq.user123"
+          description: "사용자 ID 필터 (eq.값)"
+
+        - name: title
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "ilike.*검색어*"
+          description: "제목 검색 (like.*키워드* 또는 ilike.*키워드*)"
+
+        - name: content
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "ilike.*검색어*"
+          description: "내용 검색 (like.*키워드* 또는 ilike.*키워드*)"
+
+        # 날짜 필터링
+        - name: created_at
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "gte.2023-01-01"
+          description: "생성일 필터 (gte.날짜, lte.날짜, eq.날짜 등)"
+
+        - name: updated_at
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "gte.2023-01-01"
+          description: "수정일 필터 (gte.날짜, lte.날짜, eq.날짜 등)"
+
+        # 좋아요 수 필터링
+        - name: like_count
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "gte.5"
+          description: "좋아요 수 필터 (gt.숫자, gte.숫자, lt.숫자, lte.숫자 등)"
+
+        # null 체크
+        - name: deleted_at
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "is.null"
+          description: "삭제일 체크 (is.null 또는 not.is.null)"
+
+        # 배열 필터링 (태그 등)
+        - name: tags
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "cs.{태그1,태그2}"
+          description: "태그 배열 필터 (cs.{값1,값2} - 포함, cd.{값1,값2} - 포함됨)"
+
+        # 논리 연산자
+        - name: or
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "(title.ilike.*키워드*,content.ilike.*키워드*)"
+          description: "OR 조건 (조건1,조건2,...)"
+
+        - name: and
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "(created_at.gte.2023-01-01,like_count.gte.5)"
+          description: "AND 조건 (조건1,조건2,...)"
+
+        # 부정 조건
+        - name: not
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "title.like.*제외할키워드*"
+          description: "부정 조건 (not.조건)"
+
+      security:
+        - bearerAuth: []
+
+      responses:
+        '200':
+          description: 다이어리 리스트 조회 성공
+          headers:
+            Content-Range:
+              description: "페이지네이션 정보 (예: 0-9/100)"
+              schema:
+                type: string
+                example: "0-9/100"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    user_id:
+                      type: string
+                      example: "user123"
+                    title:
+                      type: string
+                      example: "오늘의 좋은 일"
+                    content:
+                      type: string
+                      example: "팀 프로젝트가 성공적으로 완료되었다"
+                    created_at:
+                      type: string
+                      format: date-time
+                      example: "2023-12-01T09:00:00Z"
+                    updated_at:
+                      type: string
+                      format: date-time
+                      example: "2023-12-01T09:00:00Z"
+                    deleted_at:
+                      type: string
+                      format: date-time
+                      nullable: true
+                      example: null
+                    like_count:
+                      type: integer
+                      example: 5
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                      example: ["업무", "성취감"]
+                    user_profile:
+                      type: object
+                      properties:
+                        nickname:
+                          type: string
+                          example: "개발자123"
+                        avatar_url:
+                          type: string
+                          example: "https://example.com/avatar.jpg"
+
+        '206':
+          description: 부분 콘텐츠 (페이지네이션된 결과)
+          headers:
+            Content-Range:
+              description: "페이지네이션 정보"
+              schema:
+                type: string
+                example: "0-9/100"
+
+        '400':
+          description: 잘못된 요청 (필터 구문 오류 등)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid filter syntax"
+                  details:
+                    type: string
+                    example: "Expected format: column=operator.value"
+
+        '401':
+          description: 인증 필요
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "JWT expired"
+
+        '416':
+          description: 범위를 만족할 수 없음 (요청한 범위가 데이터 범위를 초과)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Requested range not satisfiable"
+
+  /rest/v1/diaries_with_likes?id=eq.{diary_id}:
+    get:
+      summary: 다이어리 단건 조회
+      tags: [Diary Management]
+      description: |
+        특정 ID의 다이어리를 조회합니다.
+        좋아요 수와 사용자 프로필 정보를 포함하여 반환합니다.
+
+        **사용 예시**:
+        ```
+        GET /rest/v1/diaries_with_likes?id=eq.123&select=*
+        ```
+
+        **단건 조회 팁**:
+        - `id=eq.{값}` 필터로 특정 다이어리 조회
+        - `deleted_at=is.null` 필터로 삭제되지 않은 항목만
+        - 결과는 배열 형태이지만 보통 단일 객체만 포함됨
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "eq.123"
+          description: "조회할 다이어리 ID 필터 (예: eq.123)"
+
+        - name: select
+          in: query
+          required: false
+          schema:
+            type: string
+            default: "*"
+            example: "*"
+          description: "조회할 컬럼 선택 (기본값: 모든 컬럼)"
+
+        # 단건 조회를 위한 추가 필터 (삭제되지 않은 항목만)
+        - name: deleted_at
+          in: query
+          required: false
+          schema:
+            type: string
+            default: "is.null"
+            example: "is.null"
+          description: "삭제되지 않은 다이어리만 조회 (기본값: is.null)"
+
+        # 권한 체크를 위한 사용자 필터 (선택사항)
+        - name: user_id
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "eq.user123"
+          description: "특정 사용자 소유 다이어리만 조회 (권한 체크용)"
+
+      security:
+        - bearerAuth: []
+
+      responses:
+        '200':
+          description: 다이어리 단건 조회 성공
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 123
+                    user_id:
+                      type: string
+                      example: "user123"
+                    title:
+                      type: string
+                      example: "오늘의 좋은 일"
+                    content:
+                      type: string
+                      example: "팀 프로젝트가 성공적으로 완료되었다. 모든 팀원들이 열심히 참여해서 좋은 결과를 얻을 수 있었다."
+                    created_at:
+                      type: string
+                      format: date-time
+                      example: "2023-12-01T09:00:00Z"
+                    updated_at:
+                      type: string
+                      format: date-time
+                      example: "2023-12-01T09:00:00Z"
+                    deleted_at:
+                      type: string
+                      format: date-time
+                      nullable: true
+                      example: null
+                    like_count:
+                      type: integer
+                      example: 5
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                      example: ["업무", "성취감", "팀워크"]
+                    user_profile:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: "user123"
+                        nickname:
+                          type: string
+                          example: "개발자123"
+                        avatar_url:
+                          type: string
+                          nullable: true
+                          example: "https://example.com/avatar.jpg"
+                        created_at:
+                          type: string
+                          format: date-time
+                          example: "2023-11-01T09:00:00Z"
+                maxItems: 1
+                description: "단건 조회 시 최대 1개의 객체를 포함하는 배열"
+
+        '404':
+          description: 다이어리를 찾을 수 없음
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No rows found"
+                  details:
+                    type: string
+                    example: "The requested diary does not exist or has been deleted"
+
+        '401':
+          description: 인증 필요
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "JWT expired"
+
+        '400':
+          description: 잘못된 요청 (잘못된 ID 형식 등)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid input syntax for type integer"
+                  details:
+                    type: string
+                    example: "ID must be a valid integer"
+
+  /rest/v1/diaries:
+    post:
+      summary: 다이어리 등록
+      tags: [Diary Management]
+      description: |
+        새로운 다이어리를 등록합니다.
+
+        **사용 예시**:
+        ```
+        POST /rest/v1/diaries
+        Content-Type: application/json
+        Prefer: return=representation
+
+        {
+          "title": "오늘의 좋은 일",
+          "content": "팀 프로젝트가 성공적으로 완료되었다",
+          "tags": ["업무", "성취감"]
+        }
+        ```
+
+        **주의사항**:
+        - `user_id`는 JWT 토큰에서 자동으로 추출됩니다
+        - `created_at`, `updated_at`은 서버에서 자동 생성됩니다
+        - `Prefer` 헤더로 응답 형식을 제어할 수 있습니다
+      parameters:
+        - name: Prefer
+          in: header
+          required: false
+          schema:
+            type: string
+            enum: ["return=minimal", "return=representation"]
+            default: "return=minimal"
+            example: "return=representation"
+          description: |
+            응답 형식:
+            - `return=minimal`: 최소 응답 (201 상태코드만)
+            - `return=representation`: 생성된 데이터 반환
+
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, content]
+              properties:
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                  example: "오늘의 좋은 일"
+                  description: "다이어리 제목 (필수, 1-200자)"
+                content:
+                  type: string
+                  minLength: 1
+                  maxLength: 5000
+                  example: "팀 프로젝트가 성공적으로 완료되었다. 모든 팀원들이 열심히 참여해서 좋은 결과를 얻을 수 있었다."
+                  description: "다이어리 내용 (필수, 1-5000자)"
+                tags:
+                  type: array
+                  items:
+                    type: string
+                    maxLength: 50
+                  maxItems: 10
+                  example: ["업무", "성취감", "팀워크"]
+                  description: "태그 배열 (선택, 최대 10개, 각 태그 최대 50자)"
+                is_public:
+                  type: boolean
+                  default: false
+                  example: false
+                  description: "공개 여부 (기본값: false)"
+                mood_score:
+                  type: integer
+                  minimum: 1
+                  maximum: 10
+                  example: 8
+                  description: "기분 점수 (1-10, 선택사항)"
+
+      responses:
+        '201':
+          description: 다이어리 생성 성공
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    description: "Prefer: return=representation 사용 시 반환되는 생성된 다이어리 데이터"
+                    properties:
+                      id:
+                        type: integer
+                        example: 124
+                      user_id:
+                        type: string
+                        example: "user123"
+                      title:
+                        type: string
+                        example: "오늘의 좋은 일"
+                      content:
+                        type: string
+                        example: "팀 프로젝트가 성공적으로 완료되었다. 모든 팀원들이 열심히 참여해서 좋은 결과를 얻을 수 있었다."
+                      tags:
+                        type: array
+                        items:
+                          type: string
+                        example: ["업무", "성취감", "팀워크"]
+                      is_public:
+                        type: boolean
+                        example: false
+                      mood_score:
+                        type: integer
+                        nullable: true
+                        example: 8
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: "2023-12-01T10:30:00Z"
+                      updated_at:
+                        type: string
+                        format: date-time
+                        example: "2023-12-01T10:30:00Z"
+                      deleted_at:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        example: null
+                  - type: string
+                    description: "Prefer: return=minimal 사용 시 빈 응답"
+                    example: ""
+
+        '400':
+          description: 잘못된 요청 (유효성 검증 실패)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid input"
+                  details:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        field:
+                          type: string
+                          example: "title"
+                        message:
+                          type: string
+                          example: "Title is required and must be between 1-200 characters"
+
+        '401':
+          description: 인증 필요
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "JWT expired"
+
+        '422':
+          description: 처리할 수 없는 엔티티 (비즈니스 로직 오류)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Duplicate constraint violation"
+                  details:
+                    type: string
+                    example: "A diary with similar content was recently created"
+
+    patch:
+      summary: 다이어리 수정
+      tags: [Diary Management]
+      description: |
+        기존 다이어리를 수정합니다.
+
+        **사용 예시**:
+        ```
+        PATCH /rest/v1/diaries?id=eq.123&user_id=eq.user123
+        Content-Type: application/json
+        Prefer: return=representation
+
+        {
+          "title": "수정된 제목",
+          "content": "수정된 내용",
+          "tags": ["업무", "성취감", "수정"]
+        }
+        ```
+
+        **주의사항**:
+        - 필터를 사용해 특정 다이어리를 지정해야 합니다
+        - 권한 확인을 위해 `user_id` 필터 사용을 권장합니다
+        - `updated_at`은 서버에서 자동으로 갱신됩니다
+        - 부분 업데이트 지원 (변경할 필드만 전송)
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "eq.123"
+          description: "수정할 다이어리 ID 필터 (예: eq.123)"
+
+        - name: user_id
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "eq.user123"
+          description: "권한 확인용 사용자 ID 필터 (권장)"
+
+        - name: deleted_at
+          in: query
+          required: false
+          schema:
+            type: string
+            default: "is.null"
+            example: "is.null"
+          description: "삭제되지 않은 다이어리만 수정 (기본값: is.null)"
+
+        - name: Prefer
+          in: header
+          required: false
+          schema:
+            type: string
+            enum: ["return=minimal", "return=representation"]
+            default: "return=minimal"
+            example: "return=representation"
+          description: |
+            응답 형식:
+            - `return=minimal`: 최소 응답 (204 상태코드만)
+            - `return=representation`: 수정된 데이터 반환
+
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                  example: "수정된 제목"
+                  description: "다이어리 제목 (1-200자)"
+                content:
+                  type: string
+                  minLength: 1
+                  maxLength: 5000
+                  example: "수정된 내용입니다. 더 자세하게 작성했습니다."
+                  description: "다이어리 내용 (1-5000자)"
+                tags:
+                  type: array
+                  items:
+                    type: string
+                    maxLength: 50
+                  maxItems: 10
+                  example: ["업무", "성취감", "수정"]
+                  description: "태그 배열 (최대 10개, 각 태그 최대 50자)"
+                is_public:
+                  type: boolean
+                  example: true
+                  description: "공개 여부"
+                mood_score:
+                  type: integer
+                  minimum: 1
+                  maximum: 10
+                  example: 9
+                  description: "기분 점수 (1-10)"
+
+      responses:
+        '200':
+          description: 다이어리 수정 성공 (Prefer: return=representation 사용 시)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 123
+                    user_id:
+                      type: string
+                      example: "user123"
+                    title:
+                      type: string
+                      example: "수정된 제목"
+                    content:
+                      type: string
+                      example: "수정된 내용입니다. 더 자세하게 작성했습니다."
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                      example: ["업무", "성취감", "수정"]
+                    is_public:
+                      type: boolean
+                      example: true
+                    mood_score:
+                      type: integer
+                      example: 9
+                    created_at:
+                      type: string
+                      format: date-time
+                      example: "2023-12-01T09:00:00Z"
+                    updated_at:
+                      type: string
+                      format: date-time
+                      example: "2023-12-01T11:30:00Z"
+                    deleted_at:
+                      type: string
+                      format: date-time
+                      nullable: true
+                      example: null
+                maxItems: 1
+                description: "수정된 다이어리 데이터"
+
+        '204':
+          description: 다이어리 수정 성공 (Prefer: return=minimal 사용 시)
+
+        '400':
+          description: 잘못된 요청 (유효성 검증 실패)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid input"
+                  details:
+                    type: string
+                    example: "Title must be between 1-200 characters"
+
+        '401':
+          description: 인증 필요
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "JWT expired"
+
+        '404':
+          description: 수정할 다이어리를 찾을 수 없음
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No rows found"
+                  details:
+                    type: string
+                    example: "The diary does not exist or you don't have permission to modify it"
+
+    delete:
+      summary: 다이어리 삭제
+      tags: [Diary Management]
+      description: |
+        기존 다이어리를 삭제합니다.
+
+        **사용 예시**:
+        ```
+        DELETE /rest/v1/diaries?id=eq.123&user_id=eq.user123
+        ```
+
+        **주의사항**:
+        - 필터를 사용해 특정 다이어리를 지정해야 합니다
+        - 권한 확인을 위해 `user_id` 필터 사용을 권장합니다
+        - 실제 삭제가 아닌 소프트 삭제(deleted_at 설정) 권장
+        - 완전 삭제 시 복구가 불가능합니다
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "eq.123"
+          description: "삭제할 다이어리 ID 필터 (예: eq.123)"
+
+        - name: user_id
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "eq.user123"
+          description: "권한 확인용 사용자 ID 필터 (권장)"
+
+        - name: deleted_at
+          in: query
+          required: false
+          schema:
+            type: string
+            default: "is.null"
+            example: "is.null"
+          description: "삭제되지 않은 다이어리만 삭제 (기본값: is.null)"
+
+      security:
+        - bearerAuth: []
+
+      responses:
+        '204':
+          description: 다이어리 삭제 성공
+
+        '401':
+          description: 인증 필요
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "JWT expired"
+
+        '404':
+          description: 삭제할 다이어리를 찾을 수 없음
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No rows found"
+                  details:
+                    type: string
+                    example: "The diary does not exist or you don't have permission to delete it"
+
+        '400':
+          description: 잘못된 요청 (필터 누락 등)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Missing required filter"
+                  details:
+                    type: string
+                    example: "ID filter is required for delete operation"
+
+  /rest/v1/diary_likes:
+    post:
+      summary: 다이어리 좋아요 추가
+      tags: [Diary Management]
+      description: |
+        특정 다이어리에 좋아요를 추가합니다.
+
+        **사용 예시**:
+        ```
+        POST /rest/v1/diary_likes
+        Content-Type: application/json
+        Prefer: return=minimal
+
+        {
+          "diary_id": 123
+        }
+        ```
+
+        **주의사항**:
+        - `user_id`는 JWT 토큰에서 자동으로 추출됩니다
+        - 동일한 사용자가 같은 다이어리에 중복 좋아요 시 에러 발생
+        - `created_at`은 서버에서 자동 생성됩니다
+      parameters:
+        - name: Prefer
+          in: header
+          required: false
+          schema:
+            type: string
+            enum: ["return=minimal", "return=representation"]
+            default: "return=minimal"
+            example: "return=minimal"
+          description: |
+            응답 형식:
+            - `return=minimal`: 최소 응답 (201 상태코드만)
+            - `return=representation`: 생성된 좋아요 데이터 반환
+
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [diary_id]
+              properties:
+                diary_id:
+                  type: integer
+                  example: 123
+                  description: "좋아요를 추가할 다이어리 ID (필수)"
+
+      responses:
+        '201':
+          description: 좋아요 추가 성공
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    description: "Prefer: return=representation 사용 시 반환되는 좋아요 데이터"
+                    properties:
+                      id:
+                        type: integer
+                        example: 456
+                      diary_id:
+                        type: integer
+                        example: 123
+                      user_id:
+                        type: string
+                        example: "user123"
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: "2023-12-01T10:30:00Z"
+                  - type: string
+                    description: "Prefer: return=minimal 사용 시 빈 응답"
+                    example: ""
+
+        '400':
+          description: 잘못된 요청 (유효성 검증 실패)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid input"
+                  details:
+                    type: string
+                    example: "diary_id is required and must be a valid integer"
+
+        '401':
+          description: 인증 필요
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "JWT expired"
+
+        '409':
+          description: 중복 좋아요 (이미 좋아요를 누른 경우)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Duplicate key value violates unique constraint"
+                  details:
+                    type: string
+                    example: "You have already liked this diary"
+
+        '404':
+          description: 존재하지 않는 다이어리
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Foreign key violation"
+                  details:
+                    type: string
+                    example: "The specified diary does not exist"
+
+    delete:
+      summary: 다이어리 좋아요 취소
+      tags: [Diary Management]
+      description: |
+        특정 다이어리에서 좋아요를 취소합니다.
+
+        **사용 예시**:
+        ```
+        DELETE /rest/v1/diary_likes?diary_id=eq.123&user_id=eq.user123
+        ```
+
+        **주의사항**:
+        - 필터를 사용해 특정 좋아요를 지정해야 합니다
+        - 권한 확인을 위해 `user_id` 필터 사용을 권장합니다
+        - 존재하지 않는 좋아요 취소 시 404 에러 발생
+      parameters:
+        - name: diary_id
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "eq.123"
+          description: "좋아요를 취소할 다이어리 ID 필터 (예: eq.123)"
+
+        - name: user_id
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "eq.user123"
+          description: "권한 확인용 사용자 ID 필터 (권장)"
+
+      security:
+        - bearerAuth: []
+
+      responses:
+        '204':
+          description: 좋아요 취소 성공
+
+        '401':
+          description: 인증 필요
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "JWT expired"
+
+        '404':
+          description: 취소할 좋아요를 찾을 수 없음
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No rows found"
+                  details:
+                    type: string
+                    example: "You haven't liked this diary or it doesn't exist"
+
+        '400':
+          description: 잘못된 요청 (필터 누락 등)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Missing required filter"
+                  details:
+                    type: string
+                    example: "diary_id filter is required for delete operation"
+
 components:
   securitySchemes:
     bearerAuth:
