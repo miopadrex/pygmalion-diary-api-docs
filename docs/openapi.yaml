@@ -402,7 +402,7 @@ paths:
           required: true
           schema:
             type: string
-            example: "eq.123"
+            example: "eq.0cf52271-bbd5-4e52-8b78-dfb257d30b8f"
           description: "조회할 다이어리 ID 필터 (예: eq.123)"
 
         - name: select
@@ -421,8 +421,7 @@ paths:
           schema:
             type: string
             default: "is.null"
-            example: "is.null"
-          description: "삭제되지 않은 다이어리만 조회 (기본값: is.null)"
+          description: "삭제되지 않은 다이어리만 조회 (예: is.null)"
 
         # 권한 체크를 위한 사용자 필터 (선택사항)
         - name: user_id
@@ -430,8 +429,7 @@ paths:
           required: false
           schema:
             type: string
-            example: "eq.user123"
-          description: "특정 사용자 소유 다이어리만 조회 (권한 체크용)"
+          description: "특정 사용자 소유 다이어리만 조회 (예:eq.user123)"
 
       security:
         - bearerAuth: []
@@ -612,12 +610,6 @@ paths:
                   default: false
                   example: false
                   description: "공개 여부 (기본값: false)"
-                mood_score:
-                  type: integer
-                  minimum: 1
-                  maximum: 10
-                  example: 8
-                  description: "기분 점수 (1-10, 선택사항)"
 
       responses:
         '201':
@@ -649,10 +641,6 @@ paths:
                       is_public:
                         type: boolean
                         example: false
-                      mood_score:
-                        type: integer
-                        nullable: true
-                        example: 8
                       created_at:
                         type: string
                         format: date-time
@@ -747,25 +735,7 @@ paths:
           required: true
           schema:
             type: string
-            example: "eq.123"
-          description: "수정할 다이어리 ID 필터 (예: eq.123)"
-
-        - name: user_id
-          in: query
-          required: false
-          schema:
-            type: string
-            example: "eq.user123"
-          description: "권한 확인용 사용자 ID 필터 (권장)"
-
-        - name: deleted_at
-          in: query
-          required: false
-          schema:
-            type: string
-            default: "is.null"
-            example: "is.null"
-          description: "삭제되지 않은 다이어리만 수정 (기본값: is.null)"
+          description: "수정할 다이어리 ID 필터 (예: eq.0cf52271-bbd5-4e52-8b78-dfb257d30b8f)"
 
         - name: Prefer
           in: header
@@ -814,12 +784,6 @@ paths:
                   type: boolean
                   example: true
                   description: "공개 여부"
-                mood_score:
-                  type: integer
-                  minimum: 1
-                  maximum: 10
-                  example: 9
-                  description: "기분 점수 (1-10)"
 
       responses:
         '200':
@@ -851,9 +815,6 @@ paths:
                     is_public:
                       type: boolean
                       example: true
-                    mood_score:
-                      type: integer
-                      example: 9
                     created_at:
                       type: string
                       format: date-time
@@ -934,25 +895,7 @@ paths:
           required: true
           schema:
             type: string
-            example: "eq.123"
-          description: "삭제할 다이어리 ID 필터 (예: eq.123)"
-
-        - name: user_id
-          in: query
-          required: false
-          schema:
-            type: string
-            example: "eq.user123"
-          description: "권한 확인용 사용자 ID 필터 (권장)"
-
-        - name: deleted_at
-          in: query
-          required: false
-          schema:
-            type: string
-            default: "is.null"
-            example: "is.null"
-          description: "삭제되지 않은 다이어리만 삭제 (기본값: is.null)"
+          description: "삭제할 다이어리 ID 필터 (예: eq.0cf52271-bbd5-4e52-8b78-dfb257d30b8f)"
 
       security:
         - bearerAuth: []
@@ -1049,7 +992,6 @@ paths:
               properties:
                 diary_id:
                   type: integer
-                  example: 123
                   description: "좋아요를 추가할 다이어리 ID (필수)"
 
       responses:
@@ -1153,16 +1095,7 @@ paths:
           required: true
           schema:
             type: string
-            example: "eq.123"
-          description: "좋아요를 취소할 다이어리 ID 필터 (예: eq.123)"
-
-        - name: user_id
-          in: query
-          required: false
-          schema:
-            type: string
-            example: "eq.user123"
-          description: "권한 확인용 사용자 ID 필터 (권장)"
+          description: "좋아요를 취소할 다이어리 ID 필터 (예: eq.0cf52271-bbd5-4e52-8b78-dfb257d30b8f)"
 
       security:
         - bearerAuth: []
