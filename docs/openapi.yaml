@@ -835,7 +835,7 @@ paths:
 
       responses:
         '200':
-          description: 다이어리 수정 성공 (Prefer return representation 사용 시)
+          description: 다이어리 수정 성공
           content:
             application/json:
               schema:
@@ -883,7 +883,7 @@ paths:
                 description: "수정된 다이어리 데이터"
 
         '204':
-          description: 다이어리 수정 성공 (Prefer: return=minimal 사용 시)
+          description: 다이어리 수정 성공 (return minimal)
 
         '400':
           description: 잘못된 요청 (유효성 검증 실패)
