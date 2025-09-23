@@ -108,7 +108,7 @@ paths:
           schema:
             type: string
             enum: ["return=minimal", "return=representation"]
-            example: "return=minimal"
+            example: "return=representation"
           description: "응답 형식: minimal(최소), representation(업데이트된 데이터 반환)"
       security:
         - bearerAuth: []
@@ -564,7 +564,7 @@ paths:
           schema:
             type: string
             enum: ["return=minimal", "return=representation"]
-            default: "return=minimal"
+            default: "return=representation"
             example: "return=representation"
           description: |
             응답 형식:
@@ -710,7 +710,7 @@ paths:
 
         **사용 예시**:
         ```
-        PATCH /rest/v1/diaries?id=eq.123&user_id=eq.user123
+        PATCH /rest/v1/diaries?id=eq.123
         Content-Type: application/json
         Prefer: return=representation
 
@@ -723,7 +723,6 @@ paths:
 
         **주의사항**:
         - 필터를 사용해 특정 다이어리를 지정해야 합니다
-        - 권한 확인을 위해 `user_id` 필터 사용을 권장합니다
         - `updated_at`은 서버에서 자동으로 갱신됩니다
         - 부분 업데이트 지원 (변경할 필드만 전송)
       parameters:
@@ -969,8 +968,7 @@ paths:
         Prefer: return=minimal
 
         {
-          "diary_id": "0cf52271-bbd5-4e52-8b78-dfb257d30b8f",
-          "user_id": "34f64ffc-d684-4bd8-9687-7aa2ecfbec95"
+          "diary_id": "0cf52271-bbd5-4e52-8b78-dfb257d30b8f"
         }
         ```
 
@@ -985,8 +983,8 @@ paths:
           schema:
             type: string
             enum: ["return=minimal", "return=representation"]
-            default: "return=minimal"
-            example: "return=minimal"
+            default: "return=representation"
+            example: "return=representation"
           description: |
             응답 형식:
             - `return=minimal`: 최소 응답 (201 상태코드만)
@@ -1110,7 +1108,18 @@ paths:
             type: string
             example: "eq.0cf52271-bbd5-4e52-8b78-dfb257d30b8f"
           description: "좋아요를 취소할 다이어리 ID 필터 (예: eq.0cf52271-bbd5-4e52-8b78-dfb257d30b8f)"
-
+        - name: Prefer
+          in: header
+          required: false
+          schema:
+            type: string
+            enum: [ "return=minimal", "return=representation" ]
+            default: "return=representation"
+            example: "return=representation"
+          description: |
+            응답 형식:
+            - `return=minimal`: 최소 응답 (201 상태코드만)
+            - `return=representation`: 생성된 좋아요 데이터 반환
       security:
         - bearerAuth: []
 
