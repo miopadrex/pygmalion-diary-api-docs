@@ -187,7 +187,6 @@ paths:
           required: false
           schema:
             type: string
-            example: "eq.123"
           description: "ID 필터 (eq.값)"
 
         - name: user_id
@@ -195,7 +194,6 @@ paths:
           required: false
           schema:
             type: string
-            example: "eq.user123"
           description: "사용자 ID 필터 (eq.값)"
 
         - name: title
@@ -203,7 +201,6 @@ paths:
           required: false
           schema:
             type: string
-            example: "ilike.*검색어*"
           description: "제목 검색 (like.*키워드* 또는 ilike.*키워드*)"
 
         - name: content
@@ -211,7 +208,6 @@ paths:
           required: false
           schema:
             type: string
-            example: "ilike.*검색어*"
           description: "내용 검색 (like.*키워드* 또는 ilike.*키워드*)"
 
         # 날짜 필터링
@@ -220,7 +216,6 @@ paths:
           required: false
           schema:
             type: string
-            example: "gte.2023-01-01"
           description: "생성일 필터 (gte.날짜, lte.날짜, eq.날짜 등)"
 
         - name: updated_at
@@ -228,7 +223,6 @@ paths:
           required: false
           schema:
             type: string
-            example: "gte.2023-01-01"
           description: "수정일 필터 (gte.날짜, lte.날짜, eq.날짜 등)"
 
         # 좋아요 수 필터링
@@ -237,7 +231,6 @@ paths:
           required: false
           schema:
             type: string
-            example: "gte.5"
           description: "좋아요 수 필터 (gt.숫자, gte.숫자, lt.숫자, lte.숫자 등)"
 
         # null 체크
@@ -246,7 +239,6 @@ paths:
           required: false
           schema:
             type: string
-            example: "is.null"
           description: "삭제일 체크 (is.null 또는 not.is.null)"
 
         # 배열 필터링 (태그 등)
@@ -255,7 +247,6 @@ paths:
           required: false
           schema:
             type: string
-            example: "cs.{태그1,태그2}"
           description: "태그 배열 필터 (cs.{값1,값2} - 포함, cd.{값1,값2} - 포함됨)"
 
         # 논리 연산자
@@ -264,7 +255,6 @@ paths:
           required: false
           schema:
             type: string
-            example: "(title.ilike.*키워드*,content.ilike.*키워드*)"
           description: "OR 조건 (조건1,조건2,...)"
 
         - name: and
@@ -272,16 +262,14 @@ paths:
           required: false
           schema:
             type: string
-            example: "(created_at.gte.2023-01-01,like_count.gte.5)"
           description: "AND 조건 (조건1,조건2,...)"
 
         # 부정 조건 예시
-        - name: title_exclude
+        - name: title_not
           in: query
           required: false
           schema:
             type: string
-            example: "not.like.*제외할키워드*"
           description: "제목 부정 조건 (not.like.*키워드* - 특정 키워드 제외)"
 
       security:
