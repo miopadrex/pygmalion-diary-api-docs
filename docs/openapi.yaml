@@ -897,6 +897,21 @@ paths:
             type: string
           description: "삭제할 다이어리 ID 필터 (예: eq.0cf52271-bbd5-4e52-8b78-dfb257d30b8f)"
 
+        - name: user_id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: "권한 확인용 사용자 ID 필터 (예:eq.34f64ffc-d684-4bd8-9687-7aa2ecfbec95)"
+
+        - name: deleted_at
+          in: query
+          required: false
+          schema:
+            type: string
+            default: "is.null"
+          description: "삭제되지 않은 다이어리만 삭제 (기본값: is.null)"
+
       security:
         - bearerAuth: []
 
@@ -992,6 +1007,7 @@ paths:
               properties:
                 diary_id:
                   type: integer
+                  example: 123
                   description: "좋아요를 추가할 다이어리 ID (필수)"
 
       responses:
@@ -1095,7 +1111,15 @@ paths:
           required: true
           schema:
             type: string
-          description: "좋아요를 취소할 다이어리 ID 필터 (예: eq.0cf52271-bbd5-4e52-8b78-dfb257d30b8f)"
+            example: "eq.123"
+          description: "좋아요를 취소할 다이어리 ID 필터 (예: eq.123)"
+
+        - name: user_id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: "권한 확인용 사용자 ID 필터 (예:eq.34f64ffc-d684-4bd8-9687-7aa2ecfbec95)"
 
       security:
         - bearerAuth: []
