@@ -835,7 +835,7 @@ paths:
 
       responses:
         '200':
-          description: 다이어리 수정 성공 (Prefer: return=representation 사용 시)
+          description: 다이어리 수정 성공 (Prefer return representation 사용 시)
           content:
             application/json:
               schema:
