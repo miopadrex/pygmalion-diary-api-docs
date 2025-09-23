@@ -119,9 +119,6 @@ paths:
             schema:
               type: object
               properties:
-                other_column:
-                  type: string
-                  example: "otherValue"
                 nickname:
                   type: string
                   example: "새로운닉네임"
@@ -972,7 +969,8 @@ paths:
         Prefer: return=minimal
 
         {
-          "diary_id": 123
+          "diary_id": "0cf52271-bbd5-4e52-8b78-dfb257d30b8f",
+          "user_id": "34f64ffc-d684-4bd8-9687-7aa2ecfbec95"
         }
         ```
 
@@ -1006,9 +1004,9 @@ paths:
               required: [diary_id]
               properties:
                 diary_id:
-                  type: integer
-                  example: 123
-                  description: "좋아요를 추가할 다이어리 ID (필수)"
+                  type: string
+                  example: eq.0cf52271-bbd5-4e52-8b78-dfb257d30b8f
+                  description: "좋아요를 추가할 다이어리 ID (예: eq.0cf52271-bbd5-4e52-8b78-dfb257d30b8f)"
 
       responses:
         '201':
@@ -1103,7 +1101,6 @@ paths:
 
         **주의사항**:
         - 필터를 사용해 특정 좋아요를 지정해야 합니다
-        - 권한 확인을 위해 `user_id` 필터 사용을 권장합니다
         - 존재하지 않는 좋아요 취소 시 404 에러 발생
       parameters:
         - name: diary_id
@@ -1111,15 +1108,8 @@ paths:
           required: true
           schema:
             type: string
-            example: "eq.123"
-          description: "좋아요를 취소할 다이어리 ID 필터 (예: eq.123)"
-
-        - name: user_id
-          in: query
-          required: true
-          schema:
-            type: string
-          description: "권한 확인용 사용자 ID 필터 (예:eq.34f64ffc-d684-4bd8-9687-7aa2ecfbec95)"
+            example: "eq.0cf52271-bbd5-4e52-8b78-dfb257d30b8f"
+          description: "좋아요를 취소할 다이어리 ID 필터 (예: eq.0cf52271-bbd5-4e52-8b78-dfb257d30b8f)"
 
       security:
         - bearerAuth: []
